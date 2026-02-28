@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🎉 Something's Waiting for You!</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+      min-height: 100vh;
+      overflow-x: hidden;
+      color: white;
+    }
+
+    /* ─── CONFETTI ─── */
+    .confetti-piece {
+      position: fixed;
+      width: 10px; height: 14px;
+      top: -20px;
+      animation: confetti-fall linear infinite;
+      z-index: 999;
+      border-radius: 2px;
+    }
+    @keyframes confetti-fall {
+      0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0.2; }
+    }
+
+    /* ─── SECTIONS ─── */
+    .section { display: none; min-height: 100vh; padding: 30px 20px; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+    .section.active { display: flex; }
+
+    /* ─── LANDING ─── */
+    #landing h1 {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(2.5rem, 8vw, 5rem);
+      background: linear-gradient(90deg, #ff6ec7, #ffdd57, #6ee7f7);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    #landing p { font-size: 1.3rem; margin: 20px 0 40px; opacity: 0.85; }
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+
+    /* ─── BUTTONS ─── */
+    .btn {
+      padding: 14px 36px;
+      border: none; border-radius: 50px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1.1rem; font-weight: 700;
+      cursor: pointer;
+      background: linear-gradient(90deg, #ff6ec7, #ff9f43);
+      color: white;
+      box-shadow: 0 8px 25px rgba(255,110,199,0.4);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 12px 30px rgba(255,110,199,0.6); }
+    .btn:active { transform: scale(0.97); }
+    .btn-blue { background: linear-gradient(90deg, #6ee7f7, #4e89f7); box-shadow: 0 8px 25px rgba(110,231,247,0.4); }
+    .btn-green { background: linear-gradient(90deg, #a8ff78, #78ffd6); color: #1a1a2e; box-shadow: 0 8px 25px rgba(168,255,120,0.4); }
+
+    /* ─── BALLOON GAME ─── */
+    #balloon-game h2 { font-family:'Fredoka One',cursive; font-size:2.5rem; margin-bottom:8px; color:#ffdd57; }
+    #balloon-game p { margin-bottom:20px; opacity:.85; }
+    #score-bar { font-size:1.4rem; font-weight:700; margin-bottom:16px; }
+    #balloon-arena {
+      position: relative;
+      width: min(500px, 90vw);
+      height: 360px;
+      background: rgba(255,255,255,0.06);
+      border: 2px solid rgba(255,255,255,0.15);
+      border-radius: 20px;
+      overflow: hidden;
+      cursor: crosshair;
+      margin-bottom: 20px;
+    }
+    .balloon {
+      position: absolute;
+      width: 54px; height: 65px;
+      border-radius: 50% 50% 50% 50% / 55% 55% 45% 45%;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      animation: float-up linear;
+      user-select: none;
+      transition: transform .1s;
+      box-shadow: inset -8px -8px 20px rgba(0,0,0,0.2);
+    }
+    .balloon::after {
+      content: '';
+      position: absolute; bottom: -20px; left: 50%; transform: translateX(-50%);
+      width: 2px; height: 20px;
+      background: rgba(255,255,255,0.5);
+    }
+    .balloon:hover { transform: scale(1.1); }
+    @keyframes float-up { from{bottom:-80px;} to{bottom:110%;} }
+
+    /* ─── CAKE ─── */
+    #cake-section h2 { font-family:'Fredoka One',cursive; font-size:2.5rem; color:#ff6ec7; margin-bottom:10px; }
+    #cake-section p { margin-bottom:25px; opacity:.85; font-size:1.1rem; }
+    #cake-wrap { position:relative; display:inline-block; }
+    #cake-img {
+      font-size: clamp(100px, 25vw, 160px);
+      line-height: 1;
+      filter: drop-shadow(0 10px 30px rgba(255,110,199,0.5));
+      display: block;
+    }
+    .candle-row { display:flex; justify-content:center; gap:18px; margin-bottom:12px; }
+    .candle {
+      font-size: 2.2rem;
+      cursor: pointer;
+      transition: transform .2s;
+      animation: flicker 0.8s ease-in-out infinite alternate;
+      user-select: none;
+    }
+    .candle:hover { transform: scale(1.3); }
+    .candle.blown { filter: grayscale(1); animation: none; opacity: 0.5; cursor: default; }
+    @keyframes flicker { from{transform:scale(1) rotate(-3deg);} to{transform:scale(1.05) rotate(3deg);} }
+    #blow-msg { font-size:1.3rem; font-weight:700; min-height:40px; margin-top:10px; }
+
+    /* ─── WISH CARD ─── */
+    #wish-section h2 { font-family:'Fredoka One',cursive; font-size:2.5rem; color:#ffdd57; margin-bottom:20px; }
+    #wish-card {
+      background: rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 24px;
+      padding: 36px 28px;
+      max-width: 520px;
+      width: 90vw;
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+    #wish-card::before {
+      content: '🎂🎁🎈';
+      position: absolute; top:-10px; right:-10px;
+      font-size: 2.5rem; opacity: 0.15;
+      transform: rotate(20deg);
+    }
+    #wish-text {
+      font-size: 1.15rem;
+      line-height: 1.8;
+      color: #ffe;
+      white-space: pre-line;
+    }
+    #sign { font-family:'Fredoka One',cursive; color:#ff6ec7; font-size:1.4rem; margin-top:16px; }
+
+    /* ─── QUIZ ─── */
+    #quiz-section h2 { font-family:'Fredoka One',cursive; font-size:2.5rem; color:#78ffd6; margin-bottom:8px; }
+    #quiz-section>p { opacity:.85; margin-bottom:24px; }
+    #quiz-box {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 24px;
+      padding: 32px 28px;
+      max-width: 540px; width:90vw;
+      margin-bottom: 24px;
+    }
+    #q-text { font-size:1.25rem; font-weight:700; margin-bottom:20px; line-height:1.5; }
+    .q-option {
+      display: block; width: 100%;
+      padding: 13px 20px;
+      margin-bottom: 10px;
+      border-radius: 12px;
+      border: 2px solid rgba(255,255,255,0.2);
+      background: rgba(255,255,255,0.05);
+      color: white;
+      font-family: 'Nunito',sans-serif;
+      font-size:1rem;
+      cursor: pointer;
+      transition: background .2s, border-color .2s;
+      text-align: left;
+    }
+    .q-option:hover { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.5); }
+    .q-option.correct { background: rgba(78,255,144,0.3); border-color: #4eff90; }
+    .q-option.wrong { background: rgba(255,78,78,0.3); border-color: #ff4e4e; }
+    #q-feedback { font-size:1.1rem; font-weight:700; min-height:30px; margin-top:5px; }
+    #q-counter { opacity:.7; font-size:.9rem; margin-bottom:16px; }
+    #quiz-result { font-family:'Fredoka One',cursive; font-size:2rem; color:#ffdd57; margin-bottom:20px; }
+
+    /* ─── NAV ─── */
+    .nav { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; margin-top:10px; }
+
+    /* ─── FINAL ─── */
+    #final-section h2 { font-family:'Fredoka One',cursive; font-size:3rem; background:linear-gradient(90deg,#ff6ec7,#ffdd57,#6ee7f7); -webkit-background-clip:text;-webkit-text-fill-color:transparent; }
+    #final-section p { font-size:1.2rem; opacity:.85; margin:16px 0 30px; max-width:500px; }
+    .emoji-rain { font-size:3.5rem; animation: bounce2 1s ease-in-out infinite alternate; }
+    @keyframes bounce2 { from{transform:translateY(0);} to{transform:translateY(-18px);} }
+  </style>
+</head>
+<body>
+
+<!-- CONFETTI -->
+<div id="confetti-container"></div>
+
+<!-- SECTION 1: LANDING -->
+<div class="section active" id="landing">
+  <h1>🎉 SURPRISE! 🎉</h1>
+  <p>Your bestie has something <strong>super special</strong> planned for you!<br>Get ready for a fun birthday adventure! 🥳</p>
+  <button class="btn" onclick="goTo('balloon-game')">Let's Go! 🎈</button>
+</div>
+
+<!-- SECTION 2: BALLOON POP GAME -->
+<div class="section" id="balloon-game">
+  <h2>🎈 Pop the Balloons!</h2>
+  <p>Pop <strong>10 balloons</strong> as fast as you can to unlock a surprise!</p>
+  <div id="score-bar">🎯 Score: <span id="score">0</span> / 10</div>
+  <div id="balloon-arena"></div>
+  <div class="nav">
+    <button class="btn btn-blue" onclick="startBalloons()">▶ Start / Restart</button>
+    <button class="btn" id="next-cake-btn" onclick="goTo('cake-section')" style="display:none">Next ➜ 🎂</button>
+  </div>
+</div>
+
+<!-- SECTION 3: CAKE -->
+<div class="section" id="cake-section">
+  <h2>🎂 Make a Wish!</h2>
+  <p>Click each candle to <strong>blow it out</strong> and make your birthday wish! 🕯️</p>
+  <div class="candle-row" id="candle-row"></div>
+  <div id="cake-wrap">
+    <span id="cake-img">🎂</span>
+  </div>
+  <div id="blow-msg"></div>
+  <div class="nav" style="margin-top:20px">
+    <button class="btn btn-green" onclick="resetCandles()">🔄 Re-light</button>
+    <button class="btn" id="next-wish-btn" onclick="goTo('wish-section')" style="display:none">Next ➜ 💌</button>
+  </div>
+</div>
+
+<!-- SECTION 4: WISH CARD -->
+<div class="section" id="wish-section">
+  <h2>💌 A Special Message</h2>
+  <div id="wish-card">
+    <div id="wish-text">LOREEN! ✨
+
+On this special day, the universe paused just to celebrate YOU. 🌟
+
+You are that one person who has a very special place in my heart and in this world as well, because you're just too good of a person.
+
+May this year be your most magical yet — filled with adventures, big laughs, yummy sushi (ofcourse not raw salmon xD), and all the happiness you deserve!
+
+Keep shining, keep being your amazing self. 🎊</div>
+    <div id="sign">— With lots of love 💖</div>
+  </div>
+  <div class="nav">
+    <button class="btn btn-blue" onclick="goTo('quiz-section')">Next ➜ 🧠 Fun Quiz!</button>
+  </div>
+</div>
+
+<!-- SECTION 5: QUIZ -->
+<div class="section" id="quiz-section">
+  <h2>🧠 Birthday Trivia!</h2>
+  <p>Lets see if you can get these right. Ready? 😄</p>
+  <div id="quiz-box">
+    <div id="q-counter"></div>
+    <div id="q-text"></div>
+    <div id="q-options"></div>
+    <div id="q-feedback"></div>
+  </div>
+  <div id="quiz-result" style="display:none"></div>
+  <div class="nav">
+    <button class="btn btn-green" onclick="startQuiz()">🔄 Restart Quiz</button>
+    <button class="btn" id="next-final-btn" onclick="goTo('final-section')" style="display:none">Finish ➜ 🎉</button>
+  </div>
+</div>
+
+<!-- SECTION 6: FINAL -->
+<div class="section" id="final-section">
+  <div class="emoji-rain">🥳</div>
+  <h2>Happy Birthday Loreen! 🎂</h2>
+  <p>Idc if u failed at every one of them...! You're officially the BEST birthday person ever! Have the most amazing day, week, month and year! LESGOOOOOO! 🎊💖🌟</p>
+  <button class="btn" onclick="goTo('landing')">🔁 Start Over</button>
+</div>
+
+<script>
+// ─── CONFETTI ───────────────────────────────────────
+const colors = ['#ff6ec7','#ffdd57','#6ee7f7','#78ffd6','#ff9f43','#a8ff78','#4e89f7','#ff6b6b'];
+const container = document.getElementById('confetti-container');
+for (let i = 0; i < 60; i++) {
+  const p = document.createElement('div');
+  p.className = 'confetti-piece';
+  p.style.left = Math.random() * 100 + 'vw';
+  p.style.background = colors[Math.floor(Math.random()*colors.length)];
+  p.style.animationDuration = (Math.random()*4+3) + 's';
+  p.style.animationDelay = (Math.random()*5) + 's';
+  p.style.width = (Math.random()*8+6) + 'px';
+  p.style.height = (Math.random()*10+8) + 'px';
+  p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+  container.appendChild(p);
+}
+
+// ─── NAVIGATION ────────────────────────────────────
+function goTo(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if (id === 'cake-section') resetCandles();
+  if (id === 'quiz-section') startQuiz();
+}
+
+// ─── BALLOON GAME ──────────────────────────────────
+const balloonEmojis = ['🎈','🎀','🌸','⭐','🌈','💎','🦋','🌺'];
+let score = 0, balloonInterval;
+function startBalloons() {
+  score = 0;
+  document.getElementById('score').textContent = 0;
+  document.getElementById('next-cake-btn').style.display = 'none';
+  const arena = document.getElementById('balloon-arena');
+  arena.innerHTML = '';
+  clearInterval(balloonInterval);
+  balloonInterval = setInterval(spawnBalloon, 700);
+}
+function spawnBalloon() {
+  if (score >= 10) { clearInterval(balloonInterval); return; }
+  const arena = document.getElementById('balloon-arena');
+  const b = document.createElement('div');
+  b.className = 'balloon';
+  const hues = [0,30,60,120,180,210,270,300];
+  const h = hues[Math.floor(Math.random()*hues.length)];
+  b.style.background = `hsl(${h},85%,60%)`;
+  b.style.left = Math.random() * (arena.offsetWidth - 60) + 'px';
+  const dur = Math.random()*2.5+2.5;
+  b.style.animationDuration = dur + 's';
+  b.innerHTML = balloonEmojis[Math.floor(Math.random()*balloonEmojis.length)];
+  b.addEventListener('click', () => {
+    b.style.transform = 'scale(1.6)';
+    b.style.opacity = '0';
+    b.style.transition = 'all 0.15s';
+    setTimeout(() => b.remove(), 150);
+    score++;
+    document.getElementById('score').textContent = score;
+    if (score >= 10) {
+      clearInterval(balloonInterval);
+      document.getElementById('next-cake-btn').style.display = 'inline-block';
+    }
+  });
+  arena.appendChild(b);
+  setTimeout(() => b.remove(), dur*1000);
+}
+
+// ─── CAKE / CANDLES ────────────────────────────────
+const candleCount = 5;
+let blown = 0;
+function resetCandles() {
+  blown = 0;
+  document.getElementById('blow-msg').textContent = '';
+  document.getElementById('next-wish-btn').style.display = 'none';
+  const row = document.getElementById('candle-row');
+  row.innerHTML = '';
+  for (let i = 0; i < candleCount; i++) {
+    const c = document.createElement('span');
+    c.className = 'candle';
+    c.textContent = '🕯️';
+    c.addEventListener('click', () => blowCandle(c));
+    row.appendChild(c);
+  }
+}
+function blowCandle(el) {
+  if (el.classList.contains('blown')) return;
+  el.classList.add('blown');
+  el.textContent = '💨';
+  blown++;
+  const msg = document.getElementById('blow-msg');
+  if (blown < candleCount) {
+    msg.textContent = `${candleCount - blown} candle${candleCount-blown>1?'s':''} left! Keep going! ✨`;
+  } else {
+    msg.innerHTML = '🌟 All candles blown! Your wish is on its way! 🌟';
+    document.getElementById('next-wish-btn').style.display = 'inline-block';
+  }
+}
+
+// ─── QUIZ ──────────────────────────────────────────
+const questions = [
+  { q:"🎂 Which country started the birthday cake tradition?", opts:["Egypt","Germany","USA","France"], ans:1, fact:"Germany introduced Kinderfest — birthday cakes for kids!" },
+  { q:"🎵 'Happy Birthday to You' was originally called...", opts:["Best Day Ever","Good Morning to All","Hooray for You","Birthday Cheer"], ans:1, fact:"It was composed in 1893 as 'Good Morning to All'!" },
+  { q:"🎈 What does the birthday person traditionally do after making a wish?", opts:["Open gifts","Dance","Blow out candles","Cut the cake"], ans:2, fact:"Blow out all candles to make the wish come true!" },
+  { q:"🌍 Which country celebrates birthdays by getting their nose greased with butter?", opts:["Canada","Mexico","Sweden","Brazil"], ans:0, fact:"It's a Canadian tradition to grease the birthday kid's nose!" },
+  { q:"🎁 In which culture are birthdays NOT traditionally celebrated?", opts:["Japanese","Jehovah's Witnesses","Korean","Mexican"], ans:1, fact:"Jehovah's Witnesses do not celebrate birthdays." },
+];
+let qIndex = 0, qScore = 0, answered = false;
+function startQuiz() {
+  qIndex = 0; qScore = 0; answered = false;
+  document.getElementById('quiz-result').style.display = 'none';
+  document.getElementById('next-final-btn').style.display = 'none';
+  renderQuestion();
+}
+function renderQuestion() {
+  if (qIndex >= questions.length) { showResult(); return; }
+  answered = false;
+  const q = questions[qIndex];
+  document.getElementById('q-counter').textContent = `Question ${qIndex+1} of ${questions.length}`;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-feedback').textContent = '';
+  const opts = document.getElementById('q-options');
+  opts.innerHTML = '';
+  q.opts.forEach((o, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'q-option';
+    btn.textContent = o;
+    btn.addEventListener('click', () => answerQ(i, btn));
+    opts.appendChild(btn);
+  });
+}
+function answerQ(i, btn) {
+  if (answered) return;
+  answered = true;
+  const q = questions[qIndex];
+  const allBtns = document.querySelectorAll('.q-option');
+  allBtns[q.ans].classList.add('correct');
+  const fb = document.getElementById('q-feedback');
+  if (i === q.ans) {
+    qScore++;
+    fb.innerHTML = '✅ Correct! ' + q.fact;
+    fb.style.color = '#78ffd6';
+  } else {
+    btn.classList.add('wrong');
+    fb.innerHTML = '❌ Oops! ' + q.fact;
+    fb.style.color = '#ff6b6b';
+  }
+  setTimeout(() => { qIndex++; renderQuestion(); }, 2000);
+}
+function showResult() {
+  const r = document.getElementById('quiz-result');
+  r.style.display = 'block';
+  const msgs = ['Keep practicing! 😄','Not bad! 🙂','Good going! 😊','Great job! 🎉','GENIUS! 🏆'];
+  r.textContent = `You scored ${qScore}/${questions.length}! ${msgs[qScore]}`;
+  document.getElementById('q-text').textContent = '';
+  document.getElementById('q-options').innerHTML = '';
+  document.getElementById('q-feedback').textContent = '';
+  document.getElementById('next-final-btn').style.display = 'inline-block';
+}
+</script>
+</body>
+</html>
